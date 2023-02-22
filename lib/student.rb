@@ -8,14 +8,15 @@ class Student
   attr_accessor :name, :grade
   attr_reader :id
 
-  def initialize(name, grade, id=nil)
+  def initialize(id=nil,name, grade)
     @name =name
     @grade = grade
     @id = id
   end
 
   def self.drop_table
-    DB[:conn].execute("DROP TABLE IF EXISTS students")
+    sql = "DROP TABLE IF EXISTS students"
+    DB[:conn].execute(sql)
   end
 
   def self.create_table
@@ -51,7 +52,10 @@ class Student
   end
 
   def self.new_from_db(row)
-    self.new(id: row[0], name: row[1], grade: row[2])
+    id = row[0]
+    name = row[1]
+    grade = row[2]
+    self.new(id, name, grade)
   end
 
   def self.find_by_name(name)
@@ -70,6 +74,6 @@ class Student
   def update
     sql = "UPDATE students SET name = ?, grade = ? WHERE id = ?"
     DB[:conn].execute(sql, self.name, self.grade, self.id)
-  end
+end
 
 end
